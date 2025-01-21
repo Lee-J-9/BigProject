@@ -1,7 +1,6 @@
 import requests
 import streamlit as st
-# if name == “main”:
-# main()
+
 # 이거 왜 됨?
 # main 때문인가?
 # GitHub의 raw 파일 URL
