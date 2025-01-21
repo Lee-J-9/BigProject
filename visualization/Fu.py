@@ -2,8 +2,7 @@ import requests
 import streamlit as st
 
 # GitHub의 raw 파일 URL
-url = "https://raw.githubusercontent.com/<username>/<repository>/<branch>/<path-to-file>.html"
-
+url = 'https://raw.githubusercontent.com/Lee-J-9/BigProject/refs/heads/main/visualization/result/test5.html'
 # HTML 파일 가져오기
 response = requests.get(url)
 if response.status_code == 200:
