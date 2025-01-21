@@ -19,3 +19,9 @@ processed_geojson_data/school.geojson
 processed_geojson_data/sidewalk.geojson
 processed_geojson_data/sports_facility.geojson
 processed_geojson_data/trash_bin_2024.geojson
+test.html
+test2.html
+test3.html
+data/배출량.csv
+/data
+/processed_geojson_data
