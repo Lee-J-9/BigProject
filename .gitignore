@@ -10,3 +10,12 @@ data/인도3.csv
 data/인도4.csv
 data/주차장 좌표.csv
 data/체육시설 좌표.csv
+
+processed_geojson_data/bus_stops.geojson
+processed_geojson_data/legal_boundary.geojson
+processed_geojson_data/parking_lot.geojson
+processed_geojson_data/road.geojson
+processed_geojson_data/school.geojson
+processed_geojson_data/sidewalk.geojson
+processed_geojson_data/sports_facility.geojson
+processed_geojson_data/trash_bin_2024.geojson
