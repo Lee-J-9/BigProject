@@ -65,7 +65,7 @@ for district_name in selected_districts:
         icon = folium.Icon(
             icon="trash",  # Font Awesome 아이콘 이름
             prefix="fa",   # Font Awesome 사용
-            color="green"  # 아이콘 색상
+            color="blue"  # 아이콘 색상
         )
         folium.Marker(
             location=[row['geometry'].y, row['geometry'].x],
