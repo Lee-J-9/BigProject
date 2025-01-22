@@ -10,11 +10,11 @@ from shapely.geometry import Point
 center_lat, center_lon = 37.5665, 126.9780
 
 # GeoJSON 데이터 로드
-legal_boundary = gpd.read_file("legal_boundary.geojson")
-trash_bins_with_districts = gpd.read_file("trash_bins_with_districts.geojson")
+legal_boundary = gpd.read_file("https://raw.githubusercontent.com/Lee-J-9/BigProject/refs/heads/final_vis/data_for_publish/legal_boundary.geojson")
+trash_bins_with_districts = gpd.read_file("https://raw.githubusercontent.com/Lee-J-9/BigProject/refs/heads/final_vis/data_for_publish/trash_bins_with_districts.geojson")
 
 # 신규 쓰레기통 데이터 로드
-new_trash_bins = pd.read_csv("new_trash_bins.csv")  # 'latitude', 'longitude' 컬럼 필요
+new_trash_bins = pd.read_csv("https://raw.githubusercontent.com/Lee-J-9/BigProject/refs/heads/final_vis/data_for_publish/recommended_trash_bins.csv")  # 'latitude', 'longitude' 컬럼 필요
 
 # 신규 쓰레기통을 GeoDataFrame으로 변환
 new_trash_bins['geometry'] = new_trash_bins.apply(
