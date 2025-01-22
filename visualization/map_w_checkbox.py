@@ -1,10 +1,4 @@
 import streamlit as st
-import folium
-from folium.plugins import MarkerCluster
-from streamlit_folium import st_folium
-import geopandas as gpd
-
-import streamlit as st
 from streamlit_folium import st_folium
 import folium
 from folium.plugins import MarkerCluster
@@ -14,7 +8,7 @@ import geopandas as gpd
 center_lat, center_lon = 37.5665, 126.9780
 
 # GeoJSON 데이터 로드
-legal_boundary = gpd.read_file("lhttps://raw.githubusercontent.com/Lee-J-9/BigProject/refs/heads/vis_test/data_for_publish/legal_boundary.geojson")
+legal_boundary = gpd.read_file("https://raw.githubusercontent.com/Lee-J-9/BigProject/refs/heads/vis_test/data_for_publish/legal_boundary.geojson")
 trash_bins_with_districts = gpd.read_file("https://raw.githubusercontent.com/Lee-J-9/BigProject/refs/heads/vis_test/data_for_publish/trash_bins_with_districts.geojson")
 
 # Sidebar에서 사용자 입력 받기
