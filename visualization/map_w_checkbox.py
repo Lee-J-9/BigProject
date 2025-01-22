@@ -8,8 +8,8 @@ import geopandas as gpd
 center_lat, center_lon = 37.5665, 126.9780
 
 # GeoJSON 데이터 로드
-legal_boundary = gpd.read_file("legal_boundary.geojson")
-trash_bins_with_districts = gpd.read_file("trash_bins_with_districts.geojson")
+legal_boundary = gpd.read_file("https://raw.githubusercontent.com/Lee-J-9/BigProject/refs/heads/vis_test/data_for_publish/legal_boundary.geojson")
+trash_bins_with_districts = gpd.read_file("https://raw.githubusercontent.com/Lee-J-9/BigProject/refs/heads/vis_test/data_for_publish/trash_bins_with_districts.geojson")
 
 # MarkerCluster 기본 옵션 설정
 default_marker_cluster_options = {
