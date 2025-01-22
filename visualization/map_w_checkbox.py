@@ -8,8 +8,16 @@ import geopandas as gpd
 center_lat, center_lon = 37.5665, 126.9780
 
 # GeoJSON 데이터 로드
-legal_boundary = gpd.read_file("https://raw.githubusercontent.com/Lee-J-9/BigProject/refs/heads/vis_test/data_for_publish/legal_boundary.geojson")
-trash_bins_with_districts = gpd.read_file("https://raw.githubusercontent.com/Lee-J-9/BigProject/refs/heads/vis_test/data_for_publish/trash_bins_with_districts.geojson")
+legal_boundary = gpd.read_file("legal_boundary.geojson")
+trash_bins_with_districts = gpd.read_file("trash_bins_with_districts.geojson")
+
+# MarkerCluster 기본 옵션 설정
+default_marker_cluster_options = {
+    "zoomToBoundsOnClick": True,      # 클러스터 클릭 시 확대
+    "showCoverageOnHover": True,      # 마우스 오버 시 클러스터 영역 표시
+    "maxClusterRadius": 200,          # 클러스터링 반경 (픽셀)
+    "disableClusteringAtZoom": 14     # 줌 레벨 15 이상에서 클러스터링 비활성화
+}
 
 # Sidebar에서 사용자 입력 받기
 st.sidebar.title("레이어 선택")
@@ -37,10 +45,10 @@ for district_name in selected_districts:
     if not district_boundary.empty:
         folium.GeoJson(
             district_boundary,
-            tooltip=district_name,  # 경계 툴팁 추가
+            tooltip=district_name,
             style_function=lambda x: {
-                "fillColor": "blue",  # 경계 색상
-                "color": "blue",
+                "fillColor": "#00b493",
+                "color": "#00b493",
                 "fillOpacity": 0.1,
                 "weight": 2,
             },
@@ -48,14 +56,24 @@ for district_name in selected_districts:
     
     # 해당 구의 쓰레기통 데이터 필터링
     district_trash_bins = trash_bins_with_districts[trash_bins_with_districts['SIG_KOR_NM'] == district_name]
-    marker_cluster = MarkerCluster().add_to(m)
+    
+    # MarkerCluster 추가
+    marker_cluster = MarkerCluster(**default_marker_cluster_options).add_to(m)
     
     for _, row in district_trash_bins.iterrows():
+        # Font Awesome 아이콘 추가
+        icon = folium.Icon(
+            icon="trash",  # Font Awesome 아이콘 이름
+            prefix="fa",   # Font Awesome 사용
+            color="green"  # 아이콘 색상
+        )
         folium.Marker(
             location=[row['geometry'].y, row['geometry'].x],
-            tooltip=f"구: {district_name}"
+            tooltip=f"구: {district_name}",
+            icon=icon
         ).add_to(marker_cluster)
 
 # Streamlit에 지도 표시
 st.title("서울시 쓰레기통 지도 🗺️")
 st_folium(m, width=800, height=600)
+
