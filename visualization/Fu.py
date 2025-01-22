@@ -4,8 +4,11 @@ import streamlit as st
 # 이거 왜 됨?
 # main 때문인가? 
 # 응 아니야 아니아니야
+
 # GitHub의 raw 파일 URL
-url = 'https://raw.githubusercontent.com/Lee-J-9/BigProject/refs/heads/main/visualization/result/test5.html'
+url = 'https://raw.githubusercontent.com/Lee-J-9/BigProject/refs/heads/vis_test/visualization/result/trash_bins_map_with_seoul_layer.html'
+
+
 
 st.title('안녕하세요 이재구 입니다.')
 st.subheader('서울시 쓰레기통 지도')
