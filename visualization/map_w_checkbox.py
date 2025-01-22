@@ -45,29 +45,29 @@ if "서울시 통합 경계 및 쓰레기통" in selected_layers:
 
     seoul_layer.add_to(m)
 
-# 2. 구별 경계 및 쓰레기통 통합 레이어
+# 2. 구별 경계 및 쓰레기통 통합 레이어 (코드 재확인 부분 삽입)
 for district_name in trash_bins_with_districts['SIG_KOR_NM'].unique():
     if district_name in selected_layers:
         district_layer = folium.FeatureGroup(name=f"{district_name}", show=False)
 
-        # 구별 경계 추가
         district_boundary = legal_boundary[legal_boundary['SIG_KOR_NM'] == district_name]
-        folium.GeoJson(
-            district_boundary,
-            tooltip=district_name  # 경계 툴팁
-        ).add_to(district_layer)
 
-        # 해당 구의 쓰레기통 데이터 필터링
-        district_trash_bins = trash_bins_with_districts[trash_bins_with_districts['SIG_KOR_NM'] == district_name]
-        marker_cluster = MarkerCluster().add_to(district_layer)
+        if not district_boundary.empty:
+            folium.GeoJson(
+                district_boundary,
+                tooltip=district_name
+            ).add_to(district_layer)
 
-        for _, row in district_trash_bins.iterrows():
-            folium.Marker(
-                location=[row['geometry'].y, row['geometry'].x],
-                tooltip=f"구: {district_name}"
-            ).add_to(marker_cluster)
+            district_trash_bins = trash_bins_with_districts[trash_bins_with_districts['SIG_KOR_NM'] == district_name]
+            marker_cluster = MarkerCluster().add_to(district_layer)
+
+            for _, row in district_trash_bins.iterrows():
+                folium.Marker(
+                    location=[row['geometry'].y, row['geometry'].x],
+                    tooltip=f"구: {district_name}"
+                ).add_to(marker_cluster)
 
         district_layer.add_to(m)
-
+        
 # Streamlit에서 Folium 지도 렌더링
 st_data = st_folium(m, width=800, height=600)
