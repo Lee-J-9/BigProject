@@ -6,6 +6,8 @@ import geopandas as gpd
 
 # --- 페이지 설정 ---
 st.set_page_config(layout="wide")  # 화면 전체 너비 사용
+if "selected_districts" not in st.session_state:
+    st.session_state["selected_districts"] = []
 
 # --- 1) 데이터 로딩 & 캐싱 ---
 @st.cache_data
