@@ -121,56 +121,55 @@ def district_style_function(_):
     }
 
 # --- (B) 왼쪽 컬럼: 지도 표시 ---
+# --- 지도 렌더링 ---
 with col_map:
-    if len(selected_districts) == 0:
-        st.info("왼쪽 사이드바에서 '서울시 전체' 또는 구를 선택해보세요!")
-    else:
+    st.markdown("### 서울시 쓰레기통 지도")
+    m = folium.Map(
+        location=st.session_state["map_center"],
+        zoom_start=st.session_state["map_zoom"]
+    )
+
+    # 지도 데이터 렌더링
+    if len(selected_districts) > 0:
         for district_name in selected_districts:
-            # 1) 구 경계 표시
+            # 구 경계 표시
             district_boundary = legal_boundary[legal_boundary["SIG_KOR_NM"] == district_name]
             if not district_boundary.empty:
                 folium.GeoJson(
                     district_boundary,
                     tooltip=district_name,
-                    style_function=district_style_function
+                    style_function=lambda _: {"fillColor": "#00b493", "fillOpacity": 0.1, "weight": 2}
                 ).add_to(m)
 
-            # 2) 기존 쓰레기통 표시
+            # 기존 쓰레기통
             if show_existing_bins:
                 district_trash_bins = trash_bins_with_districts[
                     trash_bins_with_districts["SIG_KOR_NM"] == district_name
                 ]
                 if not district_trash_bins.empty:
-                    cluster_existing = MarkerCluster(**default_marker_cluster_options).add_to(m)
+                    cluster_existing = MarkerCluster().add_to(m)
                     for _, row in district_trash_bins.iterrows():
-                        icon_existing = folium.Icon(icon="trash", prefix="fa", color="blue")
                         folium.Marker(
                             location=[row.geometry.y, row.geometry.x],
                             tooltip=f"구: {district_name}",
-                            icon=icon_existing
+                            icon=folium.Icon(icon="trash", prefix="fa", color="blue")
                         ).add_to(cluster_existing)
 
-            # 3) 신규 쓰레기통 표시(배치 점수)
+            # 신규 쓰레기통
             if show_new_bins:
-                district_new_bin = new_trash_bins[
+                district_new_bins = new_trash_bins[
                     new_trash_bins["SIG_KOR_NM"] == district_name
                 ]
-                if not district_new_bin.empty:
-                    cluster_new = MarkerCluster(**default_marker_cluster_options).add_to(m)
-                    for _, row_new in district_new_bin.iterrows():
-                        icon_new = folium.Icon(icon="trash", prefix="fa", color="red")
-                        tooltip_text_new = (
-                            f"구: {district_name}<br>"
-                            f"배치 점수: {row_new.get('score', '점수 정보 없음')}"
-                        )
+                if not district_new_bins.empty:
+                    cluster_new = MarkerCluster().add_to(m)
+                    for _, row_new in district_new_bins.iterrows():
                         folium.Marker(
                             location=[row_new.geometry.y, row_new.geometry.x],
-                            tooltip=tooltip_text_new,
-                            icon=icon_new
+                            tooltip=f"구: {district_name}<br>점수: {row_new.get('score', '없음')}",
+                            icon=folium.Icon(icon="star", prefix="fa", color="red")
                         ).add_to(cluster_new)
 
-    # 지도 렌더링
-    map_data = st_folium(m, width=1000, height=900)
+    map_data = st_folium(m, width=700, height=500)
 
 # --- (C) 오른쪽 컬럼: 선택된 구의 신규 쓰레기통 점수 표 ---
 with col_table:
