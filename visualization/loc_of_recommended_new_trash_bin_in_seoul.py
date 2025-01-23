@@ -33,13 +33,13 @@ if "map_center" not in st.session_state:
 if "map_zoom" not in st.session_state:
     st.session_state["map_zoom"] = 11
 
-# 2-2) "전체 구" 체크박스 상태 & 멀티셀렉트 상태
-if "all_districts_checkbox" not in st.session_state:
-    st.session_state["all_districts_checkbox"] = False  # 서울시 전체 체크박스 초기값
-if "selected_districts" not in st.session_state:
-    st.session_state["selected_districts"] = []         # 멀티셀렉트로 선택된 구들
-if "previous_selection" not in st.session_state:
-    st.session_state["previous_selection"] = []         # "전체 구" 켜기 전 선택 상태 기억용
+# # 2-2) "전체 구" 체크박스 상태 & 멀티셀렉트 상태
+# if "all_districts_checkbox" not in st.session_state:
+#     st.session_state["all_districts_checkbox"] = False  # 서울시 전체 체크박스 초기값
+# if "selected_districts" not in st.session_state:
+#     st.session_state["selected_districts"] = []         # 멀티셀렉트로 선택된 구들
+# if "previous_selection" not in st.session_state:
+#     st.session_state["previous_selection"] = []         # "전체 구" 켜기 전 선택 상태 기억용
 
 # --- 3) 사이드바 UI ---
 st.sidebar.title("지도 옵션")
@@ -47,11 +47,11 @@ st.sidebar.title("지도 옵션")
 # (1) 모든 구 목록 (정렬)
 all_districts = sorted(trash_bins_with_districts["SIG_KOR_NM"].unique())
 
-# (2) 서울시 전체 체크박스
-all_selected_check = st.sidebar.checkbox(
-    "서울시 전체", 
-    value=st.session_state["all_districts_checkbox"]
-)
+# # (2) 서울시 전체 체크박스
+# all_selected_check = st.sidebar.checkbox(
+#     "서울시 전체", 
+#     value=st.session_state["all_districts_checkbox"]
+# )
 
 # (3) 구 멀티셀렉트
 multiselect_districts = st.sidebar.multiselect(
@@ -65,33 +65,34 @@ show_existing_bins = st.sidebar.checkbox("기존 쓰레기통 표시", value=Tru
 show_new_bins = st.sidebar.checkbox("신규 쓰레기통(배치 점수) 표시", value=True)
 
 
-# --- 4) "전체 구" 체크박스 & 멀티셀렉트 동기화 로직 ---
-if all_selected_check and not st.session_state["all_districts_checkbox"]:
-    # (Off -> On)으로 바뀔 때
-    st.session_state["previous_selection"] = multiselect_districts  # 기존 선택 상태 저장
-    st.session_state["selected_districts"] = all_districts          # 모든 구 선택
-    st.session_state["all_districts_checkbox"] = True
-    multiselect_districts = all_districts
+# # --- 4) "전체 구" 체크박스 & 멀티셀렉트 동기화 로직 ---
+# if all_selected_check and not st.session_state["all_districts_checkbox"]:
+#     # (Off -> On)으로 바뀔 때
+#     st.session_state["previous_selection"] = multiselect_districts  # 기존 선택 상태 저장
+#     st.session_state["selected_districts"] = all_districts          # 모든 구 선택
+#     st.session_state["all_districts_checkbox"] = True
+#     multiselect_districts = all_districts
 
-elif not all_selected_check and st.session_state["all_districts_checkbox"]:
-    # (On -> Off)로 바뀔 때
-    st.session_state["selected_districts"] = st.session_state["previous_selection"]
-    st.session_state["all_districts_checkbox"] = False
-    multiselect_districts = st.session_state["previous_selection"]
+# elif not all_selected_check and st.session_state["all_districts_checkbox"]:
+#     # (On -> Off)로 바뀔 때
+#     st.session_state["selected_districts"] = st.session_state["previous_selection"]
+#     st.session_state["all_districts_checkbox"] = False
+#     multiselect_districts = st.session_state["previous_selection"]
 
-else:
-    # 체크박스 상태가 그대로인 경우(변동 없음)
-    if not all_selected_check:
-        # 체크박스가 Off 상태면 -> 멀티셀렉트 선택을 그대로
-        st.session_state["selected_districts"] = multiselect_districts
-    else:
-        # 체크박스가 On 상태를 유지 -> 계속 모든 구
-        st.session_state["selected_districts"] = all_districts
-        multiselect_districts = all_districts
+# else:
+#     # 체크박스 상태가 그대로인 경우(변동 없음)
+#     if not all_selected_check:
+#         # 체크박스가 Off 상태면 -> 멀티셀렉트 선택을 그대로
+#         st.session_state["selected_districts"] = multiselect_districts
+#     else:
+#         # 체크박스가 On 상태를 유지 -> 계속 모든 구
+#         st.session_state["selected_districts"] = all_districts
+#         multiselect_districts = all_districts
 
 # 최종 사용할 구 목록
 selected_districts = st.session_state["selected_districts"]
-
+# 최종 사용할 구 목록
+selected_districts = multiselect_districts if multiselect_districts else []  # 멀티셀렉트 값을 확인 후 설정
 # ----------------------------------------------------------------------------
 # (A) 지도와 표를 나란히(옆에) 배치하기 위해 2개의 컬럼을 만든다
 col_map, col_table = st.columns([1,1])  # 왼쪽 넓게(2), 오른쪽 좁게(1)
