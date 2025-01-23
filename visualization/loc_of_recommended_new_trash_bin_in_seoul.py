@@ -47,22 +47,24 @@ st.sidebar.title("지도 옵션")
 # (d) 구 선택 옵션(전체 선택 + 멀티셀렉트)
 all_districts = sorted(trash_bins_with_districts["SIG_KOR_NM"].unique())
 
-# (b) 기존 쓰레기통 표시
-show_existing_bins = st.sidebar.checkbox("기존 쓰레기통 표시", value=True)
-
-# (c) 신규 쓰레기통 표시
-show_new_bins = st.sidebar.checkbox("신규 쓰레기통(배치 점수) 표시", value=True)
-
+# 서울시 전체 체크박스 
 all_selected_check = st.sidebar.checkbox(
     "서울시 전체", 
     value=st.session_state["all_districts_checkbox"]
 )
 
+# 멀티셀렉트
 multiselect_districts = st.sidebar.multiselect(
     "구 선택(멀티셀렉트)",
     all_districts,
     default=st.session_state["selected_districts"]
 )
+
+# (b) 기존 쓰레기통 표시
+show_existing_bins = st.sidebar.checkbox("기존 쓰레기통 표시", value=True)
+
+# (c) 신규 쓰레기통 표시
+show_new_bins = st.sidebar.checkbox("신규 쓰레기통(배치 점수) 표시", value=True)
 
 # --- 4) "전체 구" 체크박스 & 멀티셀렉트 동기화 로직 ---
 if all_selected_check and not st.session_state["all_districts_checkbox"]:
