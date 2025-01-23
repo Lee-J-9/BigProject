@@ -4,107 +4,103 @@ import folium
 from folium.plugins import MarkerCluster
 import geopandas as gpd
 
-# matplotlib에서 colormap 사용을 위해 import
-import matplotlib.cm as cm
-import matplotlib.colors as mcolors
-
-# ------ 캐싱 함수 -------
+# --- GeoData를 캐싱해서 성능 개선 ---
 @st.cache_data
-def load_geojson(url):
-    return gpd.read_file(url)
+def load_geodata():
+    legal_boundary_data = gpd.read_file(
+        "https://raw.githubusercontent.com/Lee-J-9/BigProject/refs/heads/vis_test/data_for_publish/legal_boundary.geojson"
+    )
+    trash_bin_data = gpd.read_file(
+        "https://raw.githubusercontent.com/Lee-J-9/BigProject/refs/heads/vis_test/data_for_publish/trash_bins_with_districts.geojson"
+    )
+    return legal_boundary_data, trash_bin_data
 
-# ------ 데이터 로드 -------
-legal_boundary_url = "https://raw.githubusercontent.com/Lee-J-9/BigProject/refs/heads/vis_test/data_for_publish/legal_boundary.geojson"
-trash_bins_url = "https://raw.githubusercontent.com/Lee-J-9/BigProject/refs/heads/vis_test/data_for_publish/trash_bins_with_districts.geojson"
+# 데이터 불러오기
+legal_boundary, trash_bins_with_districts = load_geodata()
 
-legal_boundary = load_geojson(legal_boundary_url)
-trash_bins_with_districts = load_geojson(trash_bins_url)
-
-# ------ 전역 변수 설정 ------
+# 중심좌표 설정(서울시청 근처)
 center_lat, center_lon = 37.5665, 126.9780
 
+# MarkerCluster 기본 옵션
 default_marker_cluster_options = {
-    "zoomToBoundsOnClick": True,
-    "showCoverageOnHover": True,
-    "maxClusterRadius": 200,
-    "disableClusteringAtZoom": 14
+    "zoomToBoundsOnClick": True,      # 클러스터 클릭 시 확대
+    "showCoverageOnHover": True,      # 마우스 오버 시 클러스터 범위 표시
+    "maxClusterRadius": 200,          # 클러스터링 반경(픽셀 단위)
+    "disableClusteringAtZoom": 14     # 특정 줌 레벨 이상에서는 클러스터 해제
 }
 
-# ------ Streamlit UI -------
-st.set_page_config(page_title="서울시 쓰레기통 지도", layout="wide")
+# 구 경계 스타일 함수
+def district_style_function(_):
+    return {
+        "fillColor": "#00b493",
+        "color": "#00b493",
+        "fillOpacity": 0.1,
+        "weight": 2,
+    }
+
+# Streamlit 제목
 st.title("서울시 쓰레기통 지도 🗺️")
 
-# Sidebar
-with st.sidebar:
-    st.header("레이어 선택")
-    show_seoul_boundary = st.checkbox("서울시 전체 경계", value=True)
-    selected_districts = st.multiselect(
-        "구 선택",
-        trash_bins_with_districts['SIG_KOR_NM'].unique(),
-        default=[]
-    )
+# 사이드바
+st.sidebar.title("레이어 선택")
+show_seoul_boundary = st.sidebar.checkbox("서울시 전체 경계", value=True)
 
-def create_map(selected_districts, show_boundary):
-    # 지도 초기화 (원하는 타일 사용: CartoDB positron)
-    m = folium.Map(location=[center_lat, center_lon], zoom_start=11, tiles="CartoDB positron")
-    
-    # 서울시 전체 경계 표시
-    if show_boundary:
-        folium.GeoJson(
-            legal_boundary,
-            tooltip="서울시 경계",
-            style_function=lambda x: {
-                "fillColor": "#999999",
-                "color": "#999999",
-                "fillOpacity": 0.05,
-                "weight": 2,
-            },
-        ).add_to(m)
+# 구 선택 (다중 선택 가능)
+selected_districts = st.sidebar.multiselect(
+    "구 선택",
+    trash_bins_with_districts['SIG_KOR_NM'].unique(),
+    default=[]
+)
 
-    # (1) 선택된 구의 수만큼 'summer' 컬러맵에서 색상을 가져오기
-    num_districts = len(selected_districts)
-    if num_districts > 0:
-        colormap = cm.get_cmap('summer', num_districts)  # summer 컬러맵에서 N단계 색
+# Folium 지도 생성
+m = folium.Map(location=[center_lat, center_lon], zoom_start=11)
 
-    # (2) 구를 순회하며, 색상 및 경계/마커 표시
-    for i, district_name in enumerate(selected_districts):
-        # colormap에서 i번째 색상 추출 -> hex 변환
-        color = mcolors.to_hex(colormap(i)) if num_districts > 0 else "#00b493"
-        
-        # 해당 구 경계 데이터
+# 서울시 전체 경계 표시
+if show_seoul_boundary:
+    folium.GeoJson(
+        legal_boundary,
+        tooltip="서울시 경계"
+    ).add_to(m)
+
+# 구가 선택되지 않았을 경우 안내 메시지
+if len(selected_districts) == 0:
+    st.info("왼쪽 사이드바에서 구를 선택해보세요!")
+else:
+    # 선택한 구들에 대해 반복
+    for district_name in selected_districts:
+        # 해당 구 경계
         district_boundary = legal_boundary[legal_boundary['SIG_KOR_NM'] == district_name]
         if not district_boundary.empty:
             folium.GeoJson(
                 district_boundary,
                 tooltip=district_name,
-                style_function=lambda x, col=color: {
-                    "fillColor": col,
-                    "color": col,
-                    "fillOpacity": 0.1,
-                    "weight": 2,
-                },
+                style_function=district_style_function
             ).add_to(m)
-        
+
         # 해당 구의 쓰레기통 데이터
-        district_trash_bins = trash_bins_with_districts[trash_bins_with_districts['SIG_KOR_NM'] == district_name]
-        
-        # 쓰레기통 MarkerCluster
+        district_trash_bins = trash_bins_with_districts[
+            trash_bins_with_districts['SIG_KOR_NM'] == district_name
+        ]
+
+        # MarkerCluster 추가
         marker_cluster = MarkerCluster(**default_marker_cluster_options).add_to(m)
 
         for _, row in district_trash_bins.iterrows():
+            # Font Awesome 아이콘 (쓰레기통 아이콘)
             icon = folium.Icon(
                 icon="trash",
                 prefix="fa",
-                color="blue"  # 아이콘 색상(마커)은 여기서 추가로 변경 가능
+                color="blue"
             )
+            # 팝업에 표시할 내용 (데이터프레임에 'road_addr' 컬럼이 있다고 가정)
+            popup_text = row.get('address', '주소 정보 없음')
+
             folium.Marker(
-                location=[row['geometry'].y, row['geometry'].x],
-                tooltip=f"{district_name} 쓰레기통",
+                location=[row.geometry.y, row.geometry.x],
+                tooltip=f"구: {district_name}",
+                popup=popup_text,
                 icon=icon
             ).add_to(marker_cluster)
-    
-    return m
 
-# 최종 지도 생성 및 표시
-result_map = create_map(selected_districts, show_seoul_boundary)
-st_folium(result_map, width=900, height=600)
+# 지도 출력
+st_folium(m, width=800, height=600)
