@@ -147,7 +147,7 @@ with col_map:
                     trash_bins_with_districts["SIG_KOR_NM"] == district_name
                 ]
                 if not district_trash_bins.empty:
-                    cluster_existing = MarkerCluster().add_to(m)
+                    cluster_existing = MarkerCluster(**default_marker_cluster_options).add_to(m)
                     for _, row in district_trash_bins.iterrows():
                         folium.Marker(
                             location=[row.geometry.y, row.geometry.x],
@@ -161,7 +161,7 @@ with col_map:
                     new_trash_bins["SIG_KOR_NM"] == district_name
                 ]
                 if not district_new_bins.empty:
-                    cluster_new = MarkerCluster().add_to(m)
+                    cluster_new = MarkerCluster(**default_marker_cluster_options).add_to(m)
                     for _, row_new in district_new_bins.iterrows():
                         folium.Marker(
                             location=[row_new.geometry.y, row_new.geometry.x],
