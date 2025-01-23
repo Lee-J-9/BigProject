@@ -187,12 +187,12 @@ with col_table:
             df_table = df_filtered[["SIG_KOR_NM", "score"]].reset_index(drop=True)
             st.dataframe(df_table)
 
-# --- 마지막: 지도 상태를 세션에 업데이트 (지도 이동/확대 정보) ---
-if map_data and "center" in map_data:
-    lat = map_data["center"].get("lat", 0)
-    lng = map_data["center"].get("lng", 0)
-    if lat != 0 and lng != 0:
-        st.session_state["map_center"] = [lat, lng]
-        st.session_state["map_zoom"] = map_data["zoom"]
+# # --- 마지막: 지도 상태를 세션에 업데이트 (지도 이동/확대 정보) ---
+# if map_data and "center" in map_data:
+#     lat = map_data["center"].get("lat", 0)
+#     lng = map_data["center"].get("lng", 0)
+#     if lat != 0 and lng != 0:
+#         st.session_state["map_center"] = [lat, lng]
+#         st.session_state["map_zoom"] = map_data["zoom"]
 
 
