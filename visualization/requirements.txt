@@ -3,5 +3,5 @@ folium
 streamlit_folium
 geopandas 
 pip
-shapely==1.8.5
+shapely
 protobuf==3.20.*
