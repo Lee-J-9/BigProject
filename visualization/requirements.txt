@@ -4,4 +4,3 @@ streamlit_folium
 geopandas 
 pip
 shapely
-protobuf==3.20.*
