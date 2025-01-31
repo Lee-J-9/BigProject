@@ -2,3 +2,4 @@ streamlit
 folium
 streamlit_folium
 geopandas 
+shapely==1.8.5
