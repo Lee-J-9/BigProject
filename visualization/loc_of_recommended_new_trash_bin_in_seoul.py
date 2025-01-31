@@ -15,15 +15,15 @@ if "selected_districts" not in st.session_state:
 def load_geodata():
     # 서울시 경계
     legal_boundary_data = gpd.read_file(
-        "https://raw.githubusercontent.com/Lee-J-9/BigProject/refs/heads/vis_test/data_for_publish/legal_boundary.geojson"
+        "https://raw.githubusercontent.com/Lee-J-9/BigProject/refs/heads/main/data_for_publish/legal_boundary.geojson"
     )
     # 기존 쓰레기통 데이터
     trash_bin_data = gpd.read_file(
-        "https://raw.githubusercontent.com/Lee-J-9/BigProject/refs/heads/vis_test/data_for_publish/trash_bins_with_districts.geojson"
+        "https://raw.githubusercontent.com/Lee-J-9/BigProject/refs/heads/main/data_for_publish/trash_bins_with_districts.geojson"
     )
     # 신규 쓰레기통 데이터(배치 점수)
     new_trash_bin_data = gpd.read_file(
-        "https://raw.githubusercontent.com/Lee-J-9/BigProject/refs/heads/final_vis/data_for_publish/rc_trash_bins.geojson"
+        "https://raw.githubusercontent.com/Lee-J-9/BigProject/refs/heads/main/data_for_publish/rc_trash_bins.geojson"
     )
     return legal_boundary_data, trash_bin_data, new_trash_bin_data
 
