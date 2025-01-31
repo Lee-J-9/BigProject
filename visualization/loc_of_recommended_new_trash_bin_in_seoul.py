@@ -1,13 +1,4 @@
-import pkgutil
-import importlib.util
 
-if not hasattr(pkgutil, "ImpImporter"):
-    class ImpImporter:
-        def __init__(self, *args, **kwargs):
-            raise ImportError("ImpImporter is removed in Python 3.10+")
-
-    pkgutil.ImpImporter = ImpImporter
-    
 import streamlit as st
 from streamlit_folium import st_folium
 import folium
