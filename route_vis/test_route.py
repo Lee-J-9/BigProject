@@ -48,8 +48,11 @@ center = [37.5480, 127.0743]
 m = folium.Map(location=center, zoom_start=13)
 
 # 📌 클러스터별 색상 설정
-cluster_colors = {0: "blue", 1: "green", 2: "purple"}
-
+cluster_colors = {
+    0: "#8FAADC",  # 파스텔 블루 (연한 하늘색)
+    1: "#A3C9A8",  # 파스텔 그린 (연한 초록색)
+    2: "#C3A2C8"   # 파스텔 퍼플 (연보라색)
+}
 # 🚗 선택한 클러스터의 경로 추가
 filtered_routes = gdf_routes[gdf_routes['cluster'] == selected_cluster]
 for _, row in filtered_routes.iterrows():
