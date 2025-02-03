@@ -51,7 +51,7 @@ m = folium.Map(location=center, zoom_start=13)
 # 🌈 새로운 색상 설정 (sRGB 적용)
 cluster_colors = {
     0: "#00B493",  # 초록색 (sRGB: 0, 180, 147)
-    1: "#8FAADC",  # 기존 연한 블루 유지
+    1: "#3388FF",  # 퍼런색색
     2: "#F8496C"   # 보라색 (sRGB: 248, 73, 108)
 }
 # 🚗 선택한 클러스터의 경로 추가
@@ -61,7 +61,7 @@ for _, row in filtered_routes.iterrows():
     folium.GeoJson(
         data=row['geometry'].__geo_interface__,
         name=f"Cluster {selected_cluster}",
-        style_function=lambda feature: {'color': color, 'weight': 3}
+        style_function=lambda feature: {'color': color, 'weight': 1}
     ).add_to(m)
 
 # 🗑️ 선택한 클러스터의 쓰레기통 마커 추가
