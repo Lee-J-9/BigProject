@@ -75,7 +75,7 @@ for _, row in filtered_bins.iterrows():
         icon=folium.DivIcon(
             icon_size=(20, 20),
             icon_anchor=(15, 15),
-            html=f'<div style="font-size: 12pt; color: white; background-color: {marker_color}; '
+            html=f'<div style="font-size: 8pt; color: white; background-color: {marker_color}; '
                  f'border-radius: 50%; padding: 3px; width: 18px; height: 18px; '
                  f'display: flex; justify-content: center; align-items: center;">{order_number}</div>'
         ),
