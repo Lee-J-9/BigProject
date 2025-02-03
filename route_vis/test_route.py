@@ -45,7 +45,7 @@ selected_cluster = st.sidebar.selectbox("📌 클러스터 선택", df_clusters[
 
 # 🌍 지도 설정
 center = [37.54, 127.08]
-m = folium.Map(location=center, zoom_start=15)
+m = folium.Map(location=center, zoom_start=14)
 
 # 📌 클러스터별 색상 설정
 cluster_colors = {0: "blue", 1: "green", 2: "purple"}
