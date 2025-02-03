@@ -44,8 +44,8 @@ st.title("📍 클러스터별 경로 및 쓰레기통 위치 시각화")
 selected_cluster = st.sidebar.selectbox("📌 클러스터 선택", df_clusters['cluster'].unique())
 
 # 🌍 지도 설정
-center = [37.54, 127.08]
-m = folium.Map(location=center, zoom_start=14)
+center = [37.4335, 127.0138]
+m = folium.Map(location=center, zoom_start=13)
 
 # 📌 클러스터별 색상 설정
 cluster_colors = {0: "blue", 1: "green", 2: "purple"}
