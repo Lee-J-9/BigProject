@@ -61,7 +61,7 @@ for _, row in filtered_routes.iterrows():
     folium.GeoJson(
         data=row['geometry'].__geo_interface__,
         name=f"Cluster {selected_cluster}",
-        style_function=lambda feature: {'color': color, 'weight': 1}
+        style_function=lambda feature: {'color': color, 'weight': 2}
     ).add_to(m)
 
 # 🗑️ 선택한 클러스터의 쓰레기통 마커 추가
@@ -73,7 +73,7 @@ for _, row in filtered_bins.iterrows():
     folium.Marker(
         location=[row['latitude'], row['longitude']],
         icon=folium.DivIcon(
-            icon_size=(30, 30),
+            icon_size=(20, 20),
             icon_anchor=(15, 15),
             html=f'<div style="font-size: 12pt; color: white; background-color: {marker_color}; '
                  f'border-radius: 50%; padding: 5px; width: 25px; height: 25px; '
