@@ -2,52 +2,70 @@ import streamlit as st
 import folium
 import geopandas as gpd
 import pandas as pd
+import requests
+from io import BytesIO
 from streamlit_folium import folium_static
 
-# 파일 경로 설정
-route_geojson = "./testing/cluster_routes.geojson"
-csv_path = "./testing/광진구_clusters_route 1.csv"
+# 📌 GitHub RAW 데이터 URL
+geojson_url = "https://raw.githubusercontent.com/Lee-J-9/BigProject/main/route_vis/data/cluster_routes.geojson"
+csv_url = "https://raw.githubusercontent.com/Lee-J-9/BigProject/main/route_vis/data/광진구_clusters_route%201.csv"
 
-# 제목
-st.title("📍 클러스터별 경로 및 쓰레기통 위치 시각화")
+# 🚀 데이터 다운로드 함수 (Streamlit 캐싱 사용)
+@st.cache_data
+def load_geojson(url):
+    response = requests.get(url)
+    if response.status_code == 200:
+        return gpd.read_file(BytesIO(response.content))
+    else:
+        st.error(f"❌ GeoJSON 다운로드 실패! 상태 코드: {response.status_code}")
+        return None
 
-# GeoJSON 데이터 로드
-gdf_routes = gpd.read_file(route_geojson)
-df_clusters = pd.read_csv(csv_path)
+@st.cache_data
+def load_csv(url):
+    response = requests.get(url)
+    if response.status_code == 200:
+        return pd.read_csv(BytesIO(response.content))
+    else:
+        st.error(f"❌ CSV 다운로드 실패! 상태 코드: {response.status_code}")
+        return None
 
-# 📌 클러스터가 없으면 에러 처리
-if 'cluster' not in gdf_routes.columns or 'cluster' not in df_clusters.columns:
-    st.error("⚠️ `cluster` 컬럼이 데이터에 없습니다. 확인해주세요!")
+# 📌 데이터 불러오기
+gdf_routes = load_geojson(geojson_url)
+df_clusters = load_csv(csv_url)
+
+# 📌 데이터 체크
+if gdf_routes is None or df_clusters is None:
     st.stop()
 
-# 📌 **사이드바에서 클러스터 선택 옵션 추가**
+# 📌 Streamlit UI
+st.title("📍 클러스터별 경로 및 쓰레기통 위치 시각화")
+
+# 📌 클러스터 선택 옵션
 selected_cluster = st.sidebar.selectbox("📌 클러스터 선택", df_clusters['cluster'].unique())
 
-# 지도 중심 설정 (서울 광진구 기준)
+# 🌍 지도 설정
 center = [37.54, 127.08]
-m = folium.Map(location=center, zoom_start=13)
+m = folium.Map(location=center, zoom_start=15)
 
-# 📌 클러스터별 색상 설정 (경로 & 마커 동일하게 적용)
+# 📌 클러스터별 색상 설정
 cluster_colors = {0: "blue", 1: "green", 2: "purple"}
 
-# 🚗 **선택한 클러스터의 경로만 지도에 추가**
+# 🚗 선택한 클러스터의 경로 추가
 filtered_routes = gdf_routes[gdf_routes['cluster'] == selected_cluster]
 for _, row in filtered_routes.iterrows():
-    color = cluster_colors.get(selected_cluster, "gray")  # 예외 처리
-
+    color = cluster_colors.get(selected_cluster, "gray")
     folium.GeoJson(
         data=row['geometry'].__geo_interface__,
         name=f"Cluster {selected_cluster}",
-        style_function=lambda feature, color=color: {'color': color, 'weight': 3}
+        style_function=lambda feature: {'color': color, 'weight': 3}
     ).add_to(m)
-    
-# 🗑️ **선택한 클러스터의 쓰레기통 마커 추가 (수정된 코드)**
+
+# 🗑️ 선택한 클러스터의 쓰레기통 마커 추가
 filtered_bins = df_clusters[df_clusters['cluster'] == selected_cluster]
-
 for _, row in filtered_bins.iterrows():
-    order_number = row['order']  # Order 값 가져오기
-    marker_color = cluster_colors.get(selected_cluster, "gray")  # 클러스터별 색상
-
+    order_number = row['order']
+    marker_color = cluster_colors.get(selected_cluster, "gray")
+    
     folium.Marker(
         location=[row['latitude'], row['longitude']],
         icon=folium.DivIcon(
@@ -60,7 +78,5 @@ for _, row in filtered_bins.iterrows():
         popup=f"Order: {order_number}"
     ).add_to(m)
 
-
-# 🌍 **스트림릿에서 지도 표시**
+# 🌍 지도 표시
 folium_static(m)
-
