@@ -141,6 +141,17 @@ with col_img:
     st.markdown("### 🖼️ 점수 산정 방식")
     image_url = "https://raw.githubusercontent.com/Lee-J-9/BigProject/rdata/data_for_publish/score.png"
     st.image(image_url, caption="5분에 한번 쓰레기통을 만날 수 있게 하겠습니다.", use_container_width=True)
+    st.markdown("### 📊 신규 쓰레기통 점수 정보")
+    if len(multiselect_districts) == 0:
+        st.write("선택된 구가 없습니다.")
+    else:
+        df_filtered = new_trash_bins[new_trash_bins["SIG_KOR_NM"].isin(multiselect_districts)]
+        if df_filtered.empty:
+            st.write("선택된 구에 신규 쓰레기통 데이터가 없습니다.")
+        else:
+            df_table = df_filtered[["SIG_KOR_NM", "주소", "점수"]].reset_index(drop=True)
+            st.dataframe(df_table)
+
 
 st.markdown("---")  # 구분선 추가
 
