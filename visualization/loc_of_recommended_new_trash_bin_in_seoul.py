@@ -21,19 +21,14 @@ def load_geodata():
     trash_bin_data = gpd.read_file(
         "https://raw.githubusercontent.com/Lee-J-9/BigProject/refs/heads/main/data_for_publish/trash_bins_with_districts.geojson"
     )
-    # 신규 쓰레기통 데이터(배치 점수)
-    # new_trash_bin_data = gpd.read_file(
-    #     "https://raw.githubusercontent.com/Lee-J-9/BigProject/refs/heads/main/data_for_publish/rc_trash_bins.geojson"
-    # )
     new_trash_bin_data = gpd.read_file(
-        'https://raw.githubusercontent.com/Lee-J-9/BigProject/refs/heads/rdata/data_for_publish/new_trash_bins.geojson'
-        
+        "https://raw.githubusercontent.com/Lee-J-9/BigProject/refs/heads/rdata/data_for_publish/new_trash_bins.geojson"
+
     )
     return legal_boundary_data, trash_bin_data, new_trash_bin_data
 
 legal_boundary, trash_bins_with_districts, new_trash_bins = load_geodata()
 
-st.write(new_trash_bins.columns)
 
 # --- 2) 세션 스테이트 초기화 ---
 # 2-1) 지도 초기 상태(센터, 줌 레벨)
@@ -65,7 +60,7 @@ selected_districts = st.session_state["selected_districts"]
 selected_districts = multiselect_districts if multiselect_districts else []  # 멀티셀렉트 값을 확인 후 설정
 # ----------------------------------------------------------------------------
 # (A) 지도와 표를 나란히(옆에) 배치하기 위해 2개의 컬럼을 만든다
-col_map, col_table = st.columns([1,1])  # 왼쪽 넓게(2), 오른쪽 좁게(1)
+col_map, col_img = st.columns([2,1])  # 왼쪽 넓게(2), 오른쪽 좁게(1)
 # ----------------------------------------------------------------------------
 
 # --- 5) Folium 지도 생성(세션 상태의 좌표/줌 사용) ---
@@ -141,20 +136,21 @@ with col_map:
                         ).add_to(cluster_new)
 
     map_data = st_folium(m, width=700, height=500)
+    
+with col_img:
+    st.markdown("### 🖼️ 관련 이미지")
+    image_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Trash_bins_in_Seoul_2012.JPG/800px-Trash_bins_in_Seoul_2012.JPG"
+    st.image(image_url, caption="서울시 쓰레기통 예시", use_column_width=True)
 
-# --- (C) 오른쪽 컬럼: 선택된 구의 신규 쓰레기통 점수 표 ---
-with col_table:
-    st.markdown("#### 신규 쓰레기통 점수 정보")
-    if len(selected_districts) == 0:
-        st.write("선택된 구가 없습니다.")
+st.markdown("---")  # 구분선 추가
+
+st.markdown("### 📊 신규 쓰레기통 점수 정보")
+if len(multiselect_districts) == 0:
+    st.write("선택된 구가 없습니다.")
+else:
+    df_filtered = new_trash_bins[new_trash_bins["SIG_KOR_NM"].isin(multiselect_districts)]
+    if df_filtered.empty:
+        st.write("선택된 구에 신규 쓰레기통 데이터가 없습니다.")
     else:
-        # 선택된 구들에 대해 new_trash_bins를 필터링
-        df_filtered = new_trash_bins[new_trash_bins["SIG_KOR_NM"].isin(selected_districts)]
-        
-        if df_filtered.empty:
-            st.write("선택된 구에 신규 쓰레기통 데이터가 없습니다.")
-        else:
-            # geometry는 테이블에서 빼고, SIG_KOR_NM / score 등만 표시
-            df_table = df_filtered[["SIG_KOR_NM","주소","점수"]].reset_index(drop=True)
-            st.dataframe(df_table,height=500)
-
+        df_table = df_filtered[["SIG_KOR_NM", "주소", "점수"]].reset_index(drop=True)
+        st.dataframe(df_table, height=500)
