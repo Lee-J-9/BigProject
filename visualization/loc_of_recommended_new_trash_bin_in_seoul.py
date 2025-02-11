@@ -114,7 +114,7 @@ with col_map:
                 ]
                 if not district_trash_bins.empty:
                     cluster_existing = MarkerCluster(**default_marker_cluster_options).add_to(m)
-                    for _, row in district_trash_bins.iterrows():d
+                    for _, row in district_trash_bins.iterrows():
                         folium.Marker(
                             location=[row.geometry.y, row.geometry.x],
                             tooltip=f"구: {district_name}",
