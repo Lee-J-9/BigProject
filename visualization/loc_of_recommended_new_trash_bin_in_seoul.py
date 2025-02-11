@@ -114,7 +114,7 @@ with col_map:
                 ]
                 if not district_trash_bins.empty:
                     cluster_existing = MarkerCluster(**default_marker_cluster_options).add_to(m)
-                    for _, row in district_trash_bins.iterrows():
+                    for _, row in district_trash_bins.iterrows():d
                         folium.Marker(
                             location=[row.geometry.y, row.geometry.x],
                             tooltip=f"구: {district_name}",
@@ -138,9 +138,9 @@ with col_map:
     map_data = st_folium(m, width=700, height=500)
     
 with col_img:
-    st.markdown("### 🖼️ 관련 이미지")
-    image_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Trash_bins_in_Seoul_2012.JPG/800px-Trash_bins_in_Seoul_2012.JPG"
-    st.image(image_url, caption="서울시 쓰레기통 예시", use_column_width=True)
+    st.markdown("### 🖼️ 점수 산정 방식")
+    image_url = "https://raw.githubusercontent.com/Lee-J-9/BigProject/rdata/data_for_publish/score.png"
+    st.image(image_url, caption="5분에 한번 쓰레기통을 만날 수 있게 하겠습니다.", use_container_width=True)
 
 st.markdown("---")  # 구분선 추가
 
