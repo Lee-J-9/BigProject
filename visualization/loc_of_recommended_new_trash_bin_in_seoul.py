@@ -22,8 +22,11 @@ def load_geodata():
         "https://raw.githubusercontent.com/Lee-J-9/BigProject/refs/heads/main/data_for_publish/trash_bins_with_districts.geojson"
     )
     # 신규 쓰레기통 데이터(배치 점수)
+    # new_trash_bin_data = gpd.read_file(
+    #     "https://raw.githubusercontent.com/Lee-J-9/BigProject/refs/heads/main/data_for_publish/rc_trash_bins.geojson"
+    # )
     new_trash_bin_data = gpd.read_file(
-        "https://raw.githubusercontent.com/Lee-J-9/BigProject/refs/heads/main/data_for_publish/rc_trash_bins.geojson"
+        "https://raw.githubusercontent.com/Lee-J-9/BigProject/refs/heads/rdata/data_for_publish/rc_trash_bins_with_final_address.geojson"
     )
     return legal_boundary_data, trash_bin_data, new_trash_bin_data
 
@@ -149,6 +152,6 @@ with col_table:
             st.write("선택된 구에 신규 쓰레기통 데이터가 없습니다.")
         else:
             # geometry는 테이블에서 빼고, SIG_KOR_NM / score 등만 표시
-            df_table = df_filtered[["SIG_KOR_NM", "score"]].reset_index(drop=True)
-            st.dataframe(df_table)
+            df_table = df_filtered[["SIG_KOR_NM","주소","점수",]].reset_index(drop=True)
+            st.dataframe(df_table,height=500)
 
