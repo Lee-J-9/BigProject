@@ -11,7 +11,7 @@ if "selected_districts" not in st.session_state:
     st.session_state["selected_districts"] = []
 
 # --- 1) 데이터 로딩 & 캐싱 ---
-@st.cache_data
+@st.cache_data(ttl=0)
 def load_geodata():
     # 서울시 경계
     legal_boundary_data = gpd.read_file(
@@ -26,11 +26,13 @@ def load_geodata():
     #     "https://raw.githubusercontent.com/Lee-J-9/BigProject/refs/heads/main/data_for_publish/rc_trash_bins.geojson"
     # )
     new_trash_bin_data = gpd.read_file(
-        "https://raw.githubusercontent.com/Lee-J-9/BigProject/refs/heads/rdata/data_for_publish/rc_trash_bins_with_final_address.geojson"
+        'https://raw.githubusercontent.com/Lee-J-9/BigProject/refs/heads/rdata/data_for_publish/rc_trash_bins_with_final_address.geojson'
     )
     return legal_boundary_data, trash_bin_data, new_trash_bin_data
 
 legal_boundary, trash_bins_with_districts, new_trash_bins = load_geodata()
+
+st.write(new_trash_bins.columns)
 
 # --- 2) 세션 스테이트 초기화 ---
 # 2-1) 지도 초기 상태(센터, 줌 레벨)
@@ -133,7 +135,7 @@ with col_map:
                     for _, row_new in district_new_bins.iterrows():
                         folium.Marker(
                             location=[row_new.geometry.y, row_new.geometry.x],
-                            tooltip=f"구: {district_name}<br>점수: {row_new.get('score', '없음')}",
+                            tooltip=f"구: {district_name}<br>점수: {row_new.get('점수', '없음')}",
                             icon=folium.Icon(icon="star", prefix="fa", color="red")
                         ).add_to(cluster_new)
 
@@ -152,6 +154,6 @@ with col_table:
             st.write("선택된 구에 신규 쓰레기통 데이터가 없습니다.")
         else:
             # geometry는 테이블에서 빼고, SIG_KOR_NM / score 등만 표시
-            df_table = df_filtered[["SIG_KOR_NM","주소","점수",]].reset_index(drop=True)
+            df_table = df_filtered[["SIG_KOR_NM","주소","점수"]].reset_index(drop=True)
             st.dataframe(df_table,height=500)
 
