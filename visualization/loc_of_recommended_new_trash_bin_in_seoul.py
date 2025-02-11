@@ -11,7 +11,7 @@ if "selected_districts" not in st.session_state:
     st.session_state["selected_districts"] = []
 
 # --- 1) 데이터 로딩 & 캐싱 ---
-@st.cache_data(ttl=0)
+@st.cache_data
 def load_geodata():
     # 서울시 경계
     legal_boundary_data = gpd.read_file(
@@ -26,7 +26,8 @@ def load_geodata():
     #     "https://raw.githubusercontent.com/Lee-J-9/BigProject/refs/heads/main/data_for_publish/rc_trash_bins.geojson"
     # )
     new_trash_bin_data = gpd.read_file(
-        'https://raw.githubusercontent.com/Lee-J-9/BigProject/refs/heads/rdata/data_for_publish/rc_trash_bins_with_final_address.geojson'
+        'https://raw.githubusercontent.com/Lee-J-9/BigProject/refs/heads/rdata/data_for_publish/new_trash_bins.geojson'
+        
     )
     return legal_boundary_data, trash_bin_data, new_trash_bin_data
 
