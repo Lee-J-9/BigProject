@@ -135,7 +135,7 @@ with col_map:
                             icon=folium.Icon(icon="star", prefix="fa", color="red")
                         ).add_to(cluster_new)
 
-    map_data = st_folium(m, width=700, height=500)
+    map_data = st_folium(m, width=700, height=600)
     
 with col_img:
     st.markdown("### 🖼️ 점수 산정 방식")
@@ -150,18 +150,7 @@ with col_img:
             st.write("선택된 구에 신규 쓰레기통 데이터가 없습니다.")
         else:
             df_table = df_filtered[["SIG_KOR_NM", "주소", "점수"]].reset_index(drop=True)
-            st.dataframe(df_table)
+            st.dataframe(df_table,height = 180)
 
 
 st.markdown("---")  # 구분선 추가
-
-st.markdown("### 📊 신규 쓰레기통 점수 정보")
-if len(multiselect_districts) == 0:
-    st.write("선택된 구가 없습니다.")
-else:
-    df_filtered = new_trash_bins[new_trash_bins["SIG_KOR_NM"].isin(multiselect_districts)]
-    if df_filtered.empty:
-        st.write("선택된 구에 신규 쓰레기통 데이터가 없습니다.")
-    else:
-        df_table = df_filtered[["SIG_KOR_NM", "주소", "점수"]].reset_index(drop=True)
-        st.dataframe(df_table, height=500)
