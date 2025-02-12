@@ -38,7 +38,7 @@ if gdf_routes is None or df_clusters is None:
     st.stop()
 
 # 📌 Streamlit UI
-st.title("📍 클러스터별 경로 및 쓰레기통 위치 시각화")
+st.title("📍 클러스터별 동선 및 쓰레기통 위치 시각화")
 
 # 📌 클러스터 선택 옵션
 selected_cluster = st.sidebar.selectbox("📌 클러스터 선택", df_clusters['cluster'].unique())
